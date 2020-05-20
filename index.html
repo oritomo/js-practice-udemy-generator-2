@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSの勉強</title>
+  <style>
+    .job {
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    .warn {
+      font-size: 40px;
+      color: red;
+    }
+
+    .container {
+      width: 200px;
+      margin: 100px auto;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script>
+    'use strict';
+    {
+
+
+      const testingTeam = {
+        lead: '紀子',
+        tester: '悟',
+        [Symbol.iterator]: function* () {
+          yield this.lead;
+          yield this.tester;
+        }
+      };
+
+      const engineerTeam = {
+        testingTeam: testingTeam,
+        size: 3,
+        department: '開発部',
+        lead: '太郎',
+        manager: '花子',
+        engineer: '次郎',
+        [Symbol.iterator]: function* () {
+          yield this.lead;
+          yield this.manager;
+          yield this.engineer;
+          yield* this.testingTeam;
+        }
+      };
+
+
+      const names = [];
+      for (let name of engineerTeam) {
+        names.push(name);
+      }
+      console.log(names)
+
+
+
+    }
+  </script>
+
+
+</body>
+
+</html>
