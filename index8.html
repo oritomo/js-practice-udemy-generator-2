@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5/27　Generatorの練習(2回目)</title>
+</head>
+
+<body>
+  <script>
+    'use strict';
+    const names = ['jon', 'hoge', 'huga', 'hoo'];
+    names.map(name => {
+      return console.log(name);
+    });
+
+    const nameBox = [];
+    for(let name of names){
+      nameBox.push(name);
+    }
+    console.log(nameBox)
+    // const numbers = [1,2,3,4,5,6];
+    // const result = numbers.reduce((total,number)=>{
+    //   return total + number;
+    // },0)
+    // console.log(result);
+
+    //-------------------------generator--------------------
+    //何回も入ったり出たりできる関数のこと
+    // * (アスタリスク)を追加するだけ
+
+    function* shopping() {
+      //歩道
+
+      //歩道を歩いてお店に行く
+
+      //お店に到着したのでお金を持ってお店に入る
+      //yieldを使うとgeneratorの外に出ることができる
+      const store = yield 'お金';
+
+      //コインランドリーに到着したので服を持って入る
+      const cleanClothes = yield '汚れた服';
+
+      //家に歩いて帰る
+      return [store, cleanClothes];
+
+    }
+
+    //お店関連の世界
+    const gen = shopping();
+
+    //next()を呼ぶとgeneratorの中に入っていくことができる
+    //yield'お金'でgeneratorの外に出るので最初の返り値は'お金'になる
+    console.log(gen.next()); //家から歩道に出る
+
+
+    //２回目のnext()では‘リプトンのミルクティー’を持ってgeneratorの中に入る。そしてyieldで外に出るため二回目の返り値は'汚れた服'になる
+    console.log(gen.next('リプトンのミルクティー')); //お店で買い物をしてジュースを買って歩道に出る
+
+    //３回目のnext()では'きれいな服'を持ってgeneratorの中に入る。そしてreturnで値が返ってきて３回目の返り値は
+    console.log(gen.next('きれいな服')); //"リプトンのミルクティー", "きれいな服"になる。
+
+    //-------------------------------------------------------------
+    //generatorは配列でもオブジェクトでも動く
+    //for...ofとの相性が非常に良い
+    function* colors() {
+      yield '赤';
+      yield '青';
+      yield '緑';
+    }
+
+    const box = []
+    for (let color of colors()) {
+      box.push(color);
+    }
+    console.log(box);
+    console.log(box.length);
+
+    //---------------------------------------------------------------
+
+    const liverpool_u18 = {
+      manager: 'ジェラード',
+      forward: 'エリオット',
+      maincolor: '赤',
+      [Symbol.iterator]: function* () {
+        yield this.manager;
+        yield this.forward;
+      }
+    }
+
+    const liverpool = {
+      liverpool_u18,
+      member: 11,
+      manager: 'クロップ',
+      captain: 'ヘンダーソン',
+      defender: 'ファン・ダイク',
+      color: '伊勢海老色',
+      forward: 'モハメド・サラー',
+      subcolor: '白',
+      [Symbol.iterator]: function* () {
+        yield this.manager;
+        yield this.captain;
+        yield this.defender;
+        yield this.forward;
+        yield* this.liverpool_u18; //liverpool_u18にSymbold.iteratorがあり、yieldしたいものがあるか探しに行く
+      }
+    }
+    const members = []
+    for (let name of liverpool) { //liverpoolにSymbold.iteratorがあるかを探しに行く
+      members.push(name);
+    }
+    console.log(members);
+
+    //--------------------------usecase------------------------
+    //配列を扱うときはmap,reduce
+    //オブジェクトを扱うときはgenerator?
+
+    class Comment {
+      constructor(content,children){
+        this.content = content;
+        this.children = children;
+      }
+
+      *[Symbol.iterator](){
+        yield this.content;
+        for(let child of this.children){
+          yield* child;
+        }
+      }
+    }
+
+    const items = [
+      new Comment('酸性！！！',[]),
+      new Comment('繁体？？？',[]),
+      new Comment('えっ？！？',[]),
+    ]
+
+    const tree = new Comment('お腹がすきました！',items);
+
+    const values = [];
+    for (let value of values){
+      values.push(value);
+    }
+    console.log(tree);
+  </script>
+</body>
+
+</html>
